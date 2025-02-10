@@ -105,7 +105,7 @@ class current_map:
                 pygame.Rect(50, 100, 800, 30),
                 pygame.Rect(50, 100, 30, 700),
                 
-                pygame.Rect(320 ,400, 30, 400),
+                pygame.Rect(320 ,430, 30, 370),
                 pygame.Rect(320 ,400, 530, 30),
 
                 pygame.Rect(820, 100, 30, 300),
@@ -127,7 +127,7 @@ class current_map:
                 pygame.Rect(50, 100, 800, 30),
                 pygame.Rect(50, 100, 30, 700),
                 
-                pygame.Rect(320 ,400, 30, 400),
+                pygame.Rect(320 ,430, 30, 370),
                 pygame.Rect(320 ,400, 230, 30),
 
                 pygame.Rect(820, 100, 30, 700),
@@ -152,17 +152,17 @@ class current_map:
             
             self.map_rect = [
                 pygame.Rect(380, 500, 30, 400),
-                pygame.Rect(600, 350, 30, 550),
+                pygame.Rect(600, 360, 30, 510),
                 pygame.Rect(380, 870, 250, 30),
 
-                pygame.Rect(120, 500, 270, 30),
-                pygame.Rect(330, 330, 300, 30),
+                pygame.Rect(120, 500, 260, 30),
+                pygame.Rect(360, 330, 270, 30),
 
                 pygame.Rect(120, 100, 30, 400),
                 pygame.Rect(120, 100, 800, 30),
 
-                pygame.Rect(350, 280, 380, 30),
-                pygame.Rect(330, 280, 30, 70),
+                pygame.Rect(360, 280, 370, 30),
+                pygame.Rect(330, 280, 30, 80),
 
                 pygame.Rect(730, 280, 30, 620),
                 pygame.Rect(900, 100, 30, 800),
@@ -200,7 +200,7 @@ class current_map:
                 pygame.Rect(570, 620, 30, 230),
 
                 pygame.Rect(620, 250, 30, 200),
-                pygame.Rect(200, 420, 450, 30),
+                pygame.Rect(200, 420, 420, 30),
                 pygame.Rect(200, 420, 30, 400)
 
             ]
@@ -825,6 +825,8 @@ async def Gameplay(Ball_colour):
         await asyncio.sleep(0)
         screen.fill(MARINE_BLUE)
 
+        print(pygame.mouse.get_pos())
+
         background_scroll -= 0.25
         if background_scroll < -999:
             background_scroll = 0
@@ -846,7 +848,6 @@ async def Gameplay(Ball_colour):
                     ball.apply_force(event.pos)
                     ball.Power_click = False
                     ball.level_score += 1
-                    print(ball.Score)
 
         for wall in map.map_rect + map.map_moving_block_rect:
             if ball.ball.colliderect(wall):
@@ -911,7 +912,6 @@ async def Gameplay(Ball_colour):
             await End_score(ball.Score)
             return
 
-        print(ball.Score)
         map.display()
         ball.move()
         ball.display(pygame.mouse.get_pos())
