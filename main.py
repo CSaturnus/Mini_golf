@@ -7,7 +7,7 @@ pygame.init()
 pygame.mixer.init()
 
 HEIGHT, WIDTH = 1000, 1000
-FPS = 120
+FPS = 240
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 128, 0)
@@ -627,9 +627,9 @@ class current_map:
             self.map_moving_block_rect[index] = pygame.draw.rect(self.screen, GREY, (moving_wall[0] + moving_wall[8], moving_wall[1] + moving_wall[9], moving_wall[2], moving_wall[3]))
 
             if moving_wall[0] != moving_wall[4]:
-                moving_wall[8] += moving_wall[6]
+                moving_wall[8] += moving_wall[6] * 0.5
             if moving_wall[1] != moving_wall[5]:
-                moving_wall[9] += moving_wall[7]
+                moving_wall[9] += moving_wall[7] * 0.5
 
         for wall in self.map_rect:
             wall_rect = pygame.draw.rect(self.screen, MAROON, wall)
@@ -698,29 +698,30 @@ class player:
         Score_level_score_text = level_score_text.get_rect(center=(100, 950))
         self.screen.blit(level_score_text, Score_level_score_text)
 
-    def apply_force(self, mouse_pos):
-        MAX_VELOCITY = 8
-        
+    def apply_force(self, mouse_pos):   
         # Compute force
-        self.force = [(self.posx - mouse_pos[0]) * 0.05, (self.posy - mouse_pos[1]) * 0.05]
-        self.force[0] = max(-50, min(self.force[0], 50))
-        self.force[1] = max(-50, min(self.force[1], 50))
+        self.force = [(self.posx - mouse_pos[0]) * 0.04, (self.posy - mouse_pos[1]) * 0.04]
+        self.force[0] = max(-40, min(self.force[0], 40))
+        self.force[1] = max(-40, min(self.force[1], 40))
 
         # Set velocity
         self.velocity = self.force[:]
 
-        # Compute the magnitude of velocity
+    def move(self):
+        MAX_VELOCITY = 5
+
         velocity_magnitude = math.sqrt(self.velocity[0]**2 + self.velocity[1]**2)
 
-        # Limit velocity while preserving direction
+        velocity_x = self.velocity[0]
+        velocit_y = self.velocity[1]
+
         if velocity_magnitude > MAX_VELOCITY:
             scale = MAX_VELOCITY / velocity_magnitude
-            self.velocity[0] *= scale
-            self.velocity[1] *= scale
+            velocity_x = scale * self.velocity[0]
+            velocit_y = scale * self.velocity[1]
 
-    def move(self):
-        self.posx += self.velocity[0]
-        self.posy += self.velocity[1]
+        self.posx += velocity_x
+        self.posy += velocit_y
 
         # Boundary checks
         if self.posx - self.radius < 0:
