@@ -1,8 +1,7 @@
 import pygame
 import math
 import random
-import sys
-import array
+import asyncio
 
 pygame.init()
 pygame.mixer.init()
@@ -24,15 +23,17 @@ pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 30, bold=True, italic=False)
 font_100 = pygame.font.SysFont('Arial', 100, bold=True, italic=False)
 
-Plate_start = pygame.image.load('assets/sprites/Plate.png')
-Wall_texture = pygame.image.load('assets/sprites/darkwood5_0.jpg')
-grass_texture = pygame.image.load('assets/sprites/grass.png')
-Background = pygame.image.load('assets/sprites/Background.png')
-flag_sprite = pygame.image.load('assets/sprites/flag.png')
+Plate_start = pygame.image.load('Assets/sprites/Plate.png')
+Wall_texture = pygame.image.load('Assets/sprites/darkwood5_0.jpg')
+grass_texture = pygame.image.load('Assets/sprites/grass.png')
+Background = pygame.image.load('Assets/sprites/Background.png')
+flag_sprite = pygame.image.load('Assets/sprites/flag.png')
 
 Golf_swing_sound = pygame.mixer.Sound('Assets/soundEffect/golf_swing.ogg')
 Wall_hit_sound = pygame.mixer.Sound('Assets/soundEffect/hit_wall.ogg')
 in_hole = pygame.mixer.Sound('Assets/soundEffect/in_hole.ogg')
+
+Music = 'Assets/music/MidsummerGarden.ogg'
 
 class current_map:
     def __init__(self, screen): 
@@ -744,7 +745,7 @@ class player:
         if abs(self.velocity[1]) < 0.1:
             self.velocity[1] = 0
 
-def End_score(score):
+async def End_score(score):
 
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     running = True
@@ -755,6 +756,7 @@ def End_score(score):
     score.pop(0)
 
     while running:
+        await asyncio.sleep(0)
         screen.fill(MARINE_BLUE)
 
         background_scroll -= 0.25
@@ -798,21 +800,19 @@ def End_score(score):
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return
     
         pygame.display.update()
         clock.tick(FPS)
 
-def Gameplay(Ball_colour):
+async def Gameplay(Ball_colour):
 
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     running = True
     clock = pygame.time.Clock()
 
     sound_played = True
-
     Power_check = True
 
     background_scroll = 0
@@ -821,6 +821,7 @@ def Gameplay(Ball_colour):
     map = current_map(screen)
 
     while running:
+        await asyncio.sleep(0)
         screen.fill(MARINE_BLUE)
 
         background_scroll -= 0.25
@@ -834,7 +835,6 @@ def Gameplay(Ball_colour):
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and ball.velocity == [0,0] and Power_check == True:
                 if ball.ball_black_line.collidepoint(pygame.mouse.get_pos()) and ball.Power_click == False:
                     ball.Power_click = True
@@ -907,7 +907,7 @@ def Gameplay(Ball_colour):
             Power_check = True
 
         if map.map_counter > 17:
-            End_score(ball.Score)
+            await End_score(ball.Score)
             return
 
         print(ball.Score)
@@ -917,7 +917,7 @@ def Gameplay(Ball_colour):
         pygame.display.update()
         clock.tick(FPS)
 
-def main():
+async def main():
 
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     running = True
@@ -938,7 +938,12 @@ def main():
 
     Ball_colour = [255,255,255]
 
+    pygame.mixer.music.load(Music)
+    pygame.mixer.music.play(-1)  # -1 means loop indefinitely
+    pygame.mixer.music.set_volume(0.08)
+
     while running:
+        await asyncio.sleep(0)
         screen.fill(MARINE_BLUE)
 
         background_scroll -= 0.25
@@ -1007,10 +1012,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_rect.collidepoint(pygame.mouse.get_pos()):
-                    Gameplay(Ball_colour)
+                    await Gameplay(Ball_colour)
                 if change_colour_rect_1.collidepoint(pygame.mouse.get_pos()):
                     dragging_1 = True
                 if change_colour_rect_2.collidepoint(pygame.mouse.get_pos()):
@@ -1043,6 +1047,4 @@ def main():
         pygame.display.update()
         clock.tick(FPS)
 
-if __name__ == '__main__':
-    main()
-pygame.quit()
+asyncio.run(main())
